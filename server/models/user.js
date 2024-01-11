@@ -12,6 +12,10 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.methods.generateAuthToken = function () {
+	if (!process.env.JWTPRIVATEKEY) {
+		throw new Error("JWT private key is not defined.");
+	}
+	
 	const token = jwt.sign({ _id: this._id }, process.env.JWTPRIVATEKEY, {
 		expiresIn: "7d",
 	});

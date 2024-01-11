@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
 
 		res
 			.status(201)
-			.send({ message: "An Email sent to your account please verify" });
+			.send({ message: "User registered successfully. Check your email for verification instructions." });
 	} catch (error) {
 		console.log(error);
 		res.status(500).send({ message: "Internal Server Error" });
@@ -43,6 +43,10 @@ router.get("/:id/verify/:token/", async (req, res) => {
 		const user = await User.findOne({ _id: req.params.id });
 		if (!user) return res.status(400).send({ message: "Invalid link" });
 
+	// Check if the user is already verified
+		if (user.verified) {
+			return res.status(200).send({ message: "Email already verified." });
+		}
 		const token = await Token.findOne({
 			userId: user._id,
 			token: req.params.token,
